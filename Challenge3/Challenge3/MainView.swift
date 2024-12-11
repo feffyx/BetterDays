@@ -22,7 +22,7 @@ struct MainView: View {
         }
     }
 
-    private let dayNames: [String] = ["M", "T", "W", "T", "F", "S", "S"] // Nomi dei giorni
+    private let dayNames: [String] = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"] // Nomi dei giorni
 
     var body: some View {
         NavigationStack {
@@ -52,7 +52,7 @@ struct MainView: View {
                                 .font(.headline)
                                 .frame(width: 40, height: 40)
                                 .foregroundColor(thisDay == date ? .white : .black)
-                                .background(thisDay == date ? Color.purple : Color.clear)
+                                .background(thisDay == date ? Color.liliacc : Color.clear)
                                 .clipShape(Circle())
                         }
                     }
@@ -60,17 +60,7 @@ struct MainView: View {
 
                 Spacer() // Spazio sopra il bottone per centrarlo verticalmente
 
-                // Bottone per aggiungere una nuova entry
-                Button(action: {
-                    isAddingEntry = true
-                }) {
-                    Text("Add Entry")
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(Color.green)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
-                }
+                
                 .sheet(isPresented: $isAddingEntry) {
                     AddEntryView(thisDay: thisDay) { newEntry in
                         // Salva l'entry per il giorno selezionato
@@ -119,25 +109,39 @@ struct MainView: View {
                                     Spacer()
                                 }
                                 .padding()
-                                .background(Color.purple)
+                                .background(Color.liliacc)
                                 .cornerRadius(15)
                             }
                         } else {
                             Text("No entries for this day.")
                                 .foregroundColor(.gray)
-                                .italic()
+                                .padding(.top, 150)
+                                
                         }
                     }
                 }
             }
-            .padding()
+            
+            // Bottone per aggiungere una nuova entry
+            Button(action: {
+                isAddingEntry = true
+            }) {
+                Text("Add Entry")
+                    .padding()
+                    .frame(width: 150)
+                    .background(Color.blueish)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
+            }
+            
+            .padding(100)
         }
     }
 
     private let emotionToIcons: [String: [String]] = [
         "Happy": ["☀️"],
         "Sad": ["🌧️"],
-        "Excited": ["🎈"],
+        "Excited": ["🎉"],
         "Angry": ["🔥"],
         "Relaxed": ["🌊"]
     ]
@@ -158,7 +162,7 @@ struct AddEntryView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 20) {
-                Text("Add Entry for \(thisDay, formatter: DateFormatter.fullDate)")
+                Text("\(thisDay, formatter: DateFormatter.fullDate)")
                     .font(.headline)
 
                 // Selezione emozione
@@ -171,10 +175,10 @@ struct AddEntryView: View {
 
                 // TextEditor per il testo
                 TextEditor(text: $entryText)
-                    .frame(height: 100)
+                    .frame(height: 300)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color.gray, lineWidth: 1)
+                        RoundedRectangle(cornerRadius: 20)
+                            .stroke(Color.bg, lineWidth: 1)
                     )
 
                 // Selezione immagine
@@ -183,13 +187,13 @@ struct AddEntryView: View {
                         .resizable()
                         .scaledToFit()
                         .frame(height: 100)
-                        .cornerRadius(8)
+                        .cornerRadius(20)
                 } else {
-                    Button("Select Photo") {
+                    Button("Add a picture") {
                         showImagePicker = true
                     }
                     .padding()
-                    .background(Color.blue)
+                    .background(Color.liliacc)
                     .foregroundColor(.white)
                     .cornerRadius(8)
                 }
@@ -203,12 +207,12 @@ struct AddEntryView: View {
                     dismiss()
                 }
                 .padding()
-                .frame(maxWidth: .infinity)
-                .background(Color.green)
+                .frame(width: 100)
+                .background(Color.blueish)
                 .foregroundColor(.white)
                 .cornerRadius(8)
             }
-            .padding()
+            .padding(50)
             .sheet(isPresented: $showImagePicker) {
                 ImagePicker(image: $selectedPhoto)
             }
