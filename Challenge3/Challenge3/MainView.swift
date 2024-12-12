@@ -58,7 +58,7 @@ struct MainView: View {
                     }
                 }
 
-                Spacer() // Spazio sopra il bottone per centrarlo verticalmente
+                Spacer()
 
                 
                 .sheet(isPresented: $isAddingEntry) {
@@ -72,7 +72,7 @@ struct MainView: View {
                     }
                 }
 
-                Spacer() // Spazio sotto il bottone per centrarlo verticalmente
+                Spacer()
 
                 // Mostra le entry del giorno selezionato
                 ScrollView {
@@ -105,6 +105,7 @@ struct MainView: View {
                                             .foregroundColor(.white)
                                             .lineLimit(2)
                                     }
+                                    
 
                                     Spacer()
                                 }
@@ -112,6 +113,7 @@ struct MainView: View {
                                 .background(Color.liliacc)
                                 .cornerRadius(15)
                             }
+                            
                         } else {
                             Text("No entries for this day.")
                                 .foregroundColor(.gray)
@@ -119,6 +121,7 @@ struct MainView: View {
                                 
                         }
                     }
+                    .padding(.horizontal, 20) // Padding attorno alla card
                 }
             }
             
