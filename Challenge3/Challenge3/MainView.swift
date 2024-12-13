@@ -9,39 +9,52 @@ struct DiaryEntry: Identifiable {
 }
 
 struct MainView: View {
-    @State private var dayWeek: Date = Date()
-    @State private var thisDay: Date = Date() // Data selezionata
-    @State private var diaryEntries: [Date: [DiaryEntry]] = [:] // Dizionario delle entry del diario
-    @State private var isAddingEntry: Bool = false // Stato per mostrare la schermata di aggiunta entry
+    @State private var dayWeek: Date = Date() // Days of the week
+    @State private var thisDay: Date = Date() // Selected date
+    @State private var diaryEntries: [Date: [DiaryEntry]] = [:] // Displaying of the diary entries
+    @State private var isAddingEntry: Bool = false // State var to show the Adding entry sheet
+    @State private var isEditingEntry: Bool = false // State var to show the Editing entry sheet
 
     private var week: [Date] {
         let calendar = Calendar.current
-        let firstDay = calendar.date(byAdding: .day, value: -calendar.component(.weekday, from: thisDay) + 1, to: thisDay)! // Primo giorno della settimana
+        let firstDay = calendar.date(byAdding: .day, value: -calendar.component(.weekday, from: thisDay) + 1, to: thisDay)! // First day of the week
         return (0..<7).compactMap {
-            calendar.date(byAdding: .day, value: $0, to: firstDay) // Array di giorni della settimana
+            calendar.date(byAdding: .day, value: $0, to: firstDay) // Array of week's day
         }
     }
 
-    private let dayNames: [String] = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"] // Nomi dei giorni
+    
+    // Names of the days of the week
+    private let dayNames: [String] = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"]
 
+    
     var body: some View {
+        // Calendar View
         NavigationStack {
             VStack(spacing: 20) {
-                // Mostra la data completa del giorno selezionato
-                Text(thisDay, formatter: DateFormatter.fullDate)
-                    .font(.title2)
+                VStack {
+                    Text(thisDay, formatter: DateFormatter.fullDate)  // Shows the complete date of the selected day (Day, Number, Month, Year)
+                        .font(.title2)
+                        .padding(.top, 30)
+                        .padding(.bottom, 20)
+                        .foregroundStyle(Color.blueish)
+                        .fontWeight(.bold)
+                } .frame(alignment: .trailing)
+            
 
-                // Nomi dei giorni della settimana
+                // For Each displaying the names of the week
                 HStack {
                     ForEach(0..<7, id: \.self) { index in
                         Text(dayNames[index])
-                            .font(.caption)
-                            .foregroundColor(.gray)
+                            .fontWeight(.bold)
+                            .foregroundColor(.liliacc)
                             .frame(width: 40, height: 20)
+                            
                     }
                 }
-
-                // Numeri dei giorni con sfondo selezionabile
+                
+            
+                // Selectable numbers of the calendar
                 HStack {
                     ForEach(week, id: \.self) { date in
                         let day = Calendar.current.component(.day, from: date)
@@ -52,15 +65,16 @@ struct MainView: View {
                                 .font(.headline)
                                 .frame(width: 40, height: 40)
                                 .foregroundColor(thisDay == date ? .white : .black)
-                                .background(thisDay == date ? Color.liliacc : Color.clear)
+                                .background(thisDay == date ? Color.liliacc : Color.clear)  // Changes the background color of the day when selected
                                 .clipShape(Circle())
                         }
                     }
                 }
-
-                Spacer()
+                Divider()
+                    .padding(.horizontal, 20)
 
                 
+                // Sheet to add an entry
                 .sheet(isPresented: $isAddingEntry) {
                     AddEntryView(thisDay: thisDay) { newEntry in
                         // Salva l'entry per il giorno selezionato
@@ -72,75 +86,93 @@ struct MainView: View {
                     }
                 }
 
-                Spacer()
-
-                // Mostra le entry del giorno selezionato
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 10) {
-                        if let entries = diaryEntries[thisDay], !entries.isEmpty {
-                            ForEach(entries) { entry in
-                                HStack(spacing: 10) {
-                                    if let photo = entry.photo {
-                                        photo
-                                            .resizable()
-                                            .scaledToFill()
-                                            .frame(width: 100, height: 100)
-                                            .cornerRadius(8)
-                                    }
-
-                                    VStack(alignment: .leading, spacing: 5) {
-                                        Text(thisDay, formatter: DateFormatter.fullDate)
-                                            .font(.headline)
-                                            .foregroundColor(.white)
-
-                                        HStack(spacing: 5) {
-                                            ForEach(emotionToIcons[entry.emotion] ?? [], id: \.self) { icon in
-                                                Text(icon)
-                                                    .font(.title3)
-                                            }
-                                        }
-
-                                        Text(entry.text)
-                                            .font(.body)
-                                            .foregroundColor(.white)
-                                            .lineLimit(2)
-                                    }
-                                    
-
-                                    Spacer()
+        
+                // List that displays the cards of each entered entry
+                List {
+                    if let entries = diaryEntries[thisDay], !entries.isEmpty {
+                        ForEach(entries) { entry in
+                            HStack(spacing: 10) {
+                                if let photo = entry.photo {
+                                    photo
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: 100, height: 100)
+                                        .cornerRadius(8)
                                 }
-                                .padding()
-                                .background(Color.liliacc)
-                                .cornerRadius(15)
-                            }
-                            
-                        } else {
-                            Text("No entries for this day.")
-                                .foregroundColor(.gray)
-                                .padding(.top, 150)
+
+                                VStack(alignment: .leading, spacing: 5) {
+                                    Text(thisDay, formatter: DateFormatter.fullDate)
+                                        .font(.headline)
+                                        .foregroundColor(.white)
+
+                                    HStack(spacing: 5) {
+                                        ForEach(emotionToIcons[entry.emotion] ?? [], id: \.self) { icon in
+                                            Text(icon)
+                                                .font(.title3)
+                                        }
+                                    }
+
+                                    Text(entry.text)
+                                        .font(.body)
+                                        .foregroundColor(.white)
+                                        .lineLimit(2)
+                                }
                                 
+
+                                Spacer()
+                            }
+                            .padding()
+                            .background(Color.liliacc)
+                            .cornerRadius(15)
+                            .listRowSeparator(.hidden)
+                            
+                            .onTapGesture {
+                                isEditingEntry = true
+                            }
                         }
+                        .onDelete { index in
+                            diaryEntries[thisDay]?.remove(atOffsets: index)
+                        }
+                        
+                    } else {
+                        Text("No entries for this day.")
+                            .foregroundColor(.gray)
+                            .padding(.top, 150)
+                            .padding(.leading, 86)
+                            .frame(alignment: .center)
+                        
+                            .listRowSeparator(.hidden)
+                            
                     }
-                    .padding(.horizontal, 20) // Padding attorno alla card
+
+                    // .padding(.horizontal, 20) // Padding attorno alla card
                 }
+                .listStyle(.plain)
+            }
+        
+            
+            // Sheet to edit the entry
+            .sheet(isPresented: $isEditingEntry) {
+                
             }
             
-            // Bottone per aggiungere una nuova entry
+            // Add Entry button
             Button(action: {
                 isAddingEntry = true
             }) {
                 Text("Add Entry")
                     .padding()
-                    .frame(width: 150)
+                    .frame(width: 120)
                     .background(Color.blueish)
                     .foregroundColor(.white)
-                    .cornerRadius(8)
+                    .cornerRadius(15)
             }
-            
-            .padding(100)
+            .padding()
         }
     }
 
+    
+    // Emojis that represent the selected emotion
     private let emotionToIcons: [String: [String]] = [
         "Happy": ["☀️"],
         "Sad": ["🌧️"],
@@ -150,6 +182,8 @@ struct MainView: View {
     ]
 }
 
+
+// Add entry sheet view
 struct AddEntryView: View {
     @Environment(\.dismiss) var dismiss
     let thisDay: Date
@@ -179,6 +213,7 @@ struct AddEntryView: View {
                 // TextEditor per il testo
                 TextEditor(text: $entryText)
                     .frame(height: 300)
+                    .padding(15)
                     .overlay(
                         RoundedRectangle(cornerRadius: 20)
                             .stroke(Color.bg, lineWidth: 1)
@@ -190,7 +225,7 @@ struct AddEntryView: View {
                         .resizable()
                         .scaledToFit()
                         .frame(height: 100)
-                        .cornerRadius(20)
+                        .cornerRadius(15)
                 } else {
                     Button("Add a picture") {
                         showImagePicker = true
@@ -198,7 +233,7 @@ struct AddEntryView: View {
                     .padding()
                     .background(Color.liliacc)
                     .foregroundColor(.white)
-                    .cornerRadius(8)
+                    .cornerRadius(15)
                 }
 
                 Spacer()
@@ -213,7 +248,7 @@ struct AddEntryView: View {
                 .frame(width: 100)
                 .background(Color.blueish)
                 .foregroundColor(.white)
-                .cornerRadius(8)
+                .cornerRadius(15)
             }
             .padding(50)
             .sheet(isPresented: $showImagePicker) {
@@ -223,6 +258,8 @@ struct AddEntryView: View {
     }
 }
 
+
+// Image picker view
 struct ImagePicker: UIViewControllerRepresentable {
     @Binding var image: Image?
 
@@ -254,6 +291,8 @@ struct ImagePicker: UIViewControllerRepresentable {
     }
 }
 
+
+// Date formatter data extension
 extension DateFormatter { // Estensione per il formato completo della data
     static var fullDate: DateFormatter {
         let format = DateFormatter()
@@ -261,6 +300,22 @@ extension DateFormatter { // Estensione per il formato completo della data
         return format
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #Preview {
     MainView()
