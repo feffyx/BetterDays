@@ -8,10 +8,10 @@
 import SwiftUI
 
 @main
-struct Challenge3App: App {
+struct DiaryApp: App {
     var body: some Scene {
         WindowGroup {
-            MainView()
+            TabBar() // Punto di ingresso principale
         }
     }
 }

@@ -24,6 +24,8 @@ struct MainView: View {
     }
 
     
+    
+    
     // Names of the days of the week
     private let dayNames: [String] = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"]
 
@@ -138,7 +140,7 @@ struct MainView: View {
                         Text("No entries for this day.")
                             .foregroundColor(.gray)
                             .padding(.top, 150)
-                            .padding(.leading, 86)
+                            .padding(.leading, 95)
                             .frame(alignment: .center)
                         
                             .listRowSeparator(.hidden)
@@ -167,9 +169,14 @@ struct MainView: View {
                     .foregroundColor(.white)
                     .cornerRadius(15)
             }
+            
+            
             .padding()
         }
+        
+        
     }
+    
 
     
     // Emojis that represent the selected emotion
@@ -181,6 +188,8 @@ struct MainView: View {
         "Relaxed": ["🌊"]
     ]
 }
+
+
 
 
 // Add entry sheet view
@@ -300,19 +309,6 @@ extension DateFormatter { // Estensione per il formato completo della data
         return format
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
