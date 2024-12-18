@@ -8,6 +8,23 @@
 
 import SwiftUI
 import CoreHaptics
+import AVFoundation
+
+
+func speak(text: String) {
+    let synthesizer = AVSpeechSynthesizer()
+    let utterance = AVSpeechUtterance(string: text)
+    
+    
+    utterance.voice = AVSpeechSynthesisVoice(language: "en-EN")
+    utterance.rate = AVSpeechUtteranceDefaultSpeechRate
+    utterance.pitchMultiplier = 1.0
+    utterance.volume = 1.0
+    
+    
+    synthesizer.speak(utterance)
+}
+
 
 struct MindfulnessView: View {
     @State private var showMessage: Bool = false

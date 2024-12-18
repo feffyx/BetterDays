@@ -60,6 +60,9 @@ struct MainView: View {
                 HStack {
                     ForEach(week, id: \.self) { date in
                         let day = Calendar.current.component(.day, from: date)
+                        let weekdayIndex = Calendar.current.component(.weekday, from: date) - 1
+                        let weekdayName = dayNames[weekdayIndex]
+
                         Button(action: {
                             thisDay = date
                         }) {
@@ -67,11 +70,14 @@ struct MainView: View {
                                 .font(.headline)
                                 .frame(width: 40, height: 40)
                                 .foregroundColor(thisDay == date ? .white : .black)
-                                .background(thisDay == date ? Color.liliacc : Color.clear)  // Changes the background color of the day when selected
+                                .background(thisDay == date ? Color.liliacc : Color.clear)
                                 .clipShape(Circle())
                         }
+                        
+                        .accessibilityLabel("\(weekdayName), \(day)")
                     }
                 }
+
                 Divider()
                     .padding(.horizontal, 20)
 
