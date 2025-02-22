@@ -1,5 +1,5 @@
-<h1>Challenge 3 - Americano Challenge</h1>
-This individual challenge consisted of focusing on personal goals. </br>
+<h1>Better Days</h1>
+Focused on personal goals. </br>
 My objectives were to learn more about design on sketch and working on accessibility features. </br>
 
 <h1>The App</h1>
